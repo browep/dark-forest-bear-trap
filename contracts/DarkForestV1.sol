@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
+// V1
+//
+// very simplistic contract, no safeguards.  easy to front run, very little risk for the frontrunner.
 contract DarkForestV1 {
 
     event Withdrawal(uint amount, uint when);

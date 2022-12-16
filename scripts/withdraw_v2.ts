@@ -6,14 +6,15 @@ async function main() {
   const contractAddress = process.env.CONTRACT_ADDRESS as string
   console.log(`contract address: ${contractAddress}`)
 
-  const contractName = "DarkForestV1";
+  const contractName = "DarkForestV2";
   const DarkForestV1 = await ethers.getContractFactory(contractName);
 
-  const contractInstance = new ethers.Contract(contractAddress, DarkForestV1.interface, signers[0])
-  // const withdrawFunc = c2.functions["withdraw"]
-  console.log(`withdrawing`)
-  const withRes = await contractInstance.withdraw()
-  console.log(withRes.constructor['name']);
+  const c2 = new ethers.Contract(contractAddress, DarkForestV1.interface, signers[0])
+  console.log(`withdrawing with value`)
+  const withRes = await c2.withdraw({value: 1})
+  console.log(`txHash: ${withRes.hash}, waiting for conf...`);
+  await withRes.wait()
+  console.log('finished')
 
 }
 
