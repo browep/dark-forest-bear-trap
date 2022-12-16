@@ -19,4 +19,8 @@ contract DarkForestV2 {
         emit Withdrawal(address(this).balance, block.timestamp);
         payable(msg.sender).transfer(address(this).balance);
     }
+
+    // needed to add to the balance
+    receive() external payable {
+    }
 }

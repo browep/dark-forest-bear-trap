@@ -11,9 +11,9 @@ async function main() {
 
   const contractInstance = new ethers.Contract(contractAddress, DarkForestV1.interface, signers[0])
   // const withdrawFunc = c2.functions["withdraw"]
-  console.log(`withdrawing`)
+  console.log(`withdrawing...`)
   const withRes = await contractInstance.withdraw()
-  console.log(withRes.constructor['name']);
+  console.log(`txHash: ${withRes.hash}`)
 
 }
 
