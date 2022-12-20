@@ -1,19 +1,24 @@
 import { ethers } from "hardhat";
+import {extraConfig, log} from "./helpers";
+
 async function main() {
 
     const signers = await ethers.getSigners()
-    console.log(`signers: ${signers.map(s => s.address).join(",")}`)
+    log(`signers: ${signers.map(s => s.address).join(",")}`)
 
-    const contractAddress = process.env.CONTRACT_ADDRESS as string
-    console.log(`contract address: ${contractAddress}`)
+    const wsUrl = extraConfig().wsUrl
 
-    const contractName = "Scratch";
-    const ContractObj = await ethers.getContractFactory(contractName);
+    log(`ws: ${wsUrl}`)
+    const wsProvider = new ethers.providers.WebSocketProvider(wsUrl);
 
-    const scratchContract = new ethers.Contract(contractAddress, ContractObj.interface, signers[0])
-    console.log('calling myFunc...')
-    const funcReturn  = await scratchContract.myFunc()
-    console.log(`myFunc return: ${funcReturn}`)
+    log('listening...')
+    wsProvider.on("block", (args) => {
+        log(`block: ${JSON.stringify(args)}`)
+    })
+
+    while(true) {
+        await new Promise(resolve => setTimeout(resolve, 50000));
+    }
 
 }
 
