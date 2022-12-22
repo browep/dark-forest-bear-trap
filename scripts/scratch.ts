@@ -12,8 +12,19 @@ async function main() {
     const wsProvider = new ethers.providers.WebSocketProvider(wsUrl);
 
     log('listening...')
+
+    let lastBlockTime = 0;
+
     wsProvider.on("block", (args) => {
-        log(`block: ${JSON.stringify(args)}`)
+
+        let newBlockNum = args;
+        log(`block: ${newBlockNum}`);
+        (async () => {
+            const block = await wsProvider.getBlock(newBlockNum)
+            log(`block time: ${block.timestamp}, deltaT: ${block.timestamp - lastBlockTime} difficulty: ${block.difficulty}, miner: ${block.miner}`)
+            lastBlockTime = block.timestamp
+        })()
+
     })
 
     while(true) {
