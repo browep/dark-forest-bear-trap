@@ -9,7 +9,7 @@ async function main() {
     log(`signers: ${signers.map(s => s.address).join(",")}`)
     const contractAddress = process.env.CONTRACT_ADDRESS as string
     log(`contract address: ${contractAddress}`)
-    let signer = signers[0];
+    let signer = signers[1];
     log(`signer: ${signer.address}`)
 
     const wsUrl = extraConfig().wsUrl
