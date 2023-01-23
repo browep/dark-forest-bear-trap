@@ -1,9 +1,11 @@
 contract Armorer {
 
     uint256 public a;
+    address public owner;
 
     constructor() {
         a = 1;
+        owner = msg.sender;
     }
 
     function getA() public view returns (uint256) {
