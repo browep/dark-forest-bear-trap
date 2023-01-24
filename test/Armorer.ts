@@ -1,8 +1,7 @@
 import { expect } from "chai";
 import { ethers, network } from "hardhat";
 import {loadFixture, setBalance} from "@nomicfoundation/hardhat-network-helpers";
-const ONE_GWEI = 1_000_000_000;
-const HUN_GWEI = 1_000_000_000 * 1000;
+const DF_START_BALANCE = ethers.utils.parseEther("1");
 
 describe("Armorer", function () {
 
@@ -16,9 +15,9 @@ describe("Armorer", function () {
         const armorer = await Armorer.deploy();
 
         const DarkForest1 = await ethers.getContractFactory("DarkForestV1");
-        const df1 = await DarkForest1.deploy({value: HUN_GWEI})
+        const df1 = await DarkForest1.deploy({value: DF_START_BALANCE})
         let df1Balance = await ethers.provider.getBalance(df1.address);
-        expect(df1Balance).to.equal(ethers.BigNumber.from(HUN_GWEI));
+        expect(df1Balance).to.equal(ethers.BigNumber.from(DF_START_BALANCE));
 
         return {armorer, df1}
     }
@@ -35,7 +34,7 @@ describe("Armorer", function () {
             // deploy df1
             const {armorer, df1} = await loadFixture(deployArmorerAndDF1);
             let df1Balance = await ethers.provider.getBalance(df1.address);
-            expect(df1Balance).to.equal(ethers.BigNumber.from(HUN_GWEI));
+            expect(df1Balance).to.equal(ethers.BigNumber.from(DF_START_BALANCE));
 
             // withdraw straight
             await df1.withdraw()
@@ -50,7 +49,7 @@ describe("Armorer", function () {
             const {armorer, df1} = await loadFixture(deployArmorerAndDF1);
 
             let df1Balance = await ethers.provider.getBalance(df1.address);
-            expect(df1Balance).to.equal(ethers.BigNumber.from(HUN_GWEI));
+            expect(df1Balance).to.equal(ethers.BigNumber.from(DF_START_BALANCE));
 
             const [signer] = await ethers.getSigners()
             const signerStartingBalance = await ethers.provider.getBalance(signer.address);
