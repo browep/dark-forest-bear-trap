@@ -1,6 +1,8 @@
-interface DF {
-    function withdraw() external;
-}
+//interface DF {
+//    function withdraw() external payable;
+//}
+
+import "./DarkForestV1.sol";
 
 contract Armorer {
 
@@ -8,11 +10,14 @@ contract Armorer {
     }
 
     function yoink(address payable _addr) public payable {
-//        (bool success, bytes memory data) = _addr.call{value: msg.value, gas: gasleft()}(
-//            abi.encodeWithSignature("withdraw()")
-//        );
-        DF(_addr).withdraw();
-
-//        require(success, "yoink was not successful");
+        (bool success) = _addr.call{value: msg.value, gas: gasleft()}(
+            abi.encodeWithSignature("withdraw()")
+        );
+        require(success, "yoink was not successful");
     }
+
+    // needed to add to the balance
+    receive() external payable {
+    }
+
 }

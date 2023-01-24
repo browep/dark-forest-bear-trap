@@ -11,9 +11,11 @@ contract DarkForestV1 {
     constructor() payable {
     }
 
-    function withdraw() public {
-        emit Withdrawal(address(this).balance, block.timestamp);
-        payable(msg.sender).transfer(address(this).balance);
+    function withdraw() external payable returns(uint256) {
+        uint256 currentBalance = address(this).balance;
+        emit Withdrawal(currentBalance, block.timestamp);
+        payable(msg.sender).transfer(currentBalance);
+        return currentBalance;
     }
 
     // needed to add to the balance
