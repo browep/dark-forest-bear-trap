@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { ethers, network } from "hardhat";
 import {loadFixture, setBalance} from "@nomicfoundation/hardhat-network-helpers";
 const ONE_GWEI = 1_000_000_000;
+const HUN_GWEI = 1_000_000_000 * 1000;
 
 describe("Armorer", function () {
 
@@ -15,9 +16,9 @@ describe("Armorer", function () {
         const armorer = await Armorer.deploy();
 
         const DarkForest1 = await ethers.getContractFactory("DarkForestV1");
-        const df1 = await DarkForest1.deploy({value: ONE_GWEI})
+        const df1 = await DarkForest1.deploy({value: HUN_GWEI})
         let df1Balance = await ethers.provider.getBalance(df1.address);
-        expect(df1Balance).to.equal(ethers.BigNumber.from(ONE_GWEI));
+        expect(df1Balance).to.equal(ethers.BigNumber.from(HUN_GWEI));
 
         return {armorer, df1}
     }
@@ -34,7 +35,7 @@ describe("Armorer", function () {
             // deploy df1
             const {armorer, df1} = await loadFixture(deployArmorerAndDF1);
             let df1Balance = await ethers.provider.getBalance(df1.address);
-            expect(df1Balance).to.equal(ethers.BigNumber.from(ONE_GWEI));
+            expect(df1Balance).to.equal(ethers.BigNumber.from(HUN_GWEI));
 
             // withdraw straight
             await df1.withdraw()
@@ -49,14 +50,26 @@ describe("Armorer", function () {
             const {armorer, df1} = await loadFixture(deployArmorerAndDF1);
 
             let df1Balance = await ethers.provider.getBalance(df1.address);
-            expect(df1Balance).to.equal(ethers.BigNumber.from(ONE_GWEI));
+            expect(df1Balance).to.equal(ethers.BigNumber.from(HUN_GWEI));
+
+            const [signer] = await ethers.getSigners()
+            const signerStartingBalance = await ethers.provider.getBalance(signer.address);
 
             // try to get funds from df1
-            const yoinkTx = await armorer.yoink(df1.address)
+            let ABI = [
+                "function withdraw()"
+            ];
+            let iface = new ethers.utils.Interface(ABI);
+            const funcData = iface.encodeFunctionData("withdraw" )
+            await armorer.yoink(df1.address, funcData)
 
             // df1 should have no funds now
             df1Balance = await ethers.provider.getBalance(df1.address);
             expect(df1Balance).to.equal(ethers.BigNumber.from(0));
+
+            // signer should have more funds now
+            const signerEndingBalance = await ethers.provider.getBalance(signer.address);
+            expect(signerEndingBalance).to.be.greaterThan(signerStartingBalance, `\nstart: ${signerStartingBalance}\nend  : ${signerEndingBalance}`);
 
         });
 
