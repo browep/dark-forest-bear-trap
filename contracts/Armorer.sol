@@ -13,7 +13,7 @@ contract Armorer {
         // grab the starting balance for comparison
         uint256 startBalance = address(this).balance;
         // execute the call to the specified contract
-        (bool success, bytes memory data) = _addr.call{value: msg.value, gas: gasleft()}(
+        (bool success,) = _addr.call{value: msg.value, gas: gasleft()}(
             funcData
         );
 
